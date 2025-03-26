@@ -10,9 +10,11 @@ import java.io.IOException;
 @Service
 public class FileService {
     private final FileRepository fileRepository;
+    private final SignatureScanService signatureScanService;
 
-    public FileService(FileRepository fileRepository) {
+    public FileService(FileRepository fileRepository, SignatureScanService signatureScanService) {
         this.fileRepository = fileRepository;
+        this.signatureScanService = signatureScanService;
     }
 
     public FileEntity saveFile(MultipartFile file) throws IOException {
@@ -20,8 +22,13 @@ public class FileService {
         fileEntity.setName(file.getOriginalFilename());
         fileEntity.setContentType(file.getContentType());
         fileEntity.setSize(file.getSize());
-        fileEntity.setContent(file.getBytes());
+        byte[] fileContent = file.getBytes();
 
+        if (!signatureScanService.isFileSafe(fileContent)) {
+            throw new IOException("File contains known malicious signature!");
+        }
+
+        fileEntity.setContent(fileContent);
         return fileRepository.save(fileEntity);
     }
 

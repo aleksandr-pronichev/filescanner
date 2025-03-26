@@ -30,7 +30,7 @@ public class FileController {
             FileEntity savedFile = fileService.saveFile(file);
             return ResponseEntity.ok(savedFile.getId());
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Failed to process file");
+            return ResponseEntity.status(400).body("File rejected: contains known malicious signature");
         }
     }
 
