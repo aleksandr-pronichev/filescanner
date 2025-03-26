@@ -1,47 +1,32 @@
 package ru.restful.filescanner.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
+
+@Data
 @Entity
+@Table(name = "files")
 public class FileEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String fileName;
-    private String filePath;
+    private Long id;
 
-    public FileEntity() {}
+    @Column(nullable = false)
+    private String name;
 
-    public FileEntity(String fileName, String filePath) {
-        this.fileName = fileName;
-        this.filePath = filePath;
-    }
+    @Column(name = "content_type")
+    private String contentType;
 
-    public Long getId() {
-        return id;
-    }
+    private Long size;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Lob
+    @Column(nullable = false)
+    private byte[] content;
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
+    @CreationTimestamp
+    @Column(name = "upload_date")
+    private LocalDateTime uploadDate;
 }
